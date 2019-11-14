@@ -1,5 +1,7 @@
 <?php
 
+use Shopware\Components\Routing\Router;
+
 /**
  * $Id: $
  */
@@ -1338,4 +1340,23 @@ class Mopt_PayonePaymentHelper
         Shopware()->Models()->flush();
     }
 
+    /**
+     * @param Router $router
+     * @param $userParams
+     * @param null $context
+     * @return false|string
+     */
+    public function assembleTokenizedUrl($router, $userParams, $context = null) {
+        if(version_compare(Shopware()->Config()->get('version'), '5.6.0', '>='))
+        {
+            /** @noinspection PhpFullyQualifiedNameUsageInspection */
+            $token = Shopware()->Container()->get(\Shopware\Components\Cart\PaymentTokenService::class)->generate();
+            /** @noinspection PhpFullyQualifiedNameUsageInspection */
+            $userParams[\Shopware\Components\Cart\PaymentTokenService::TYPE_PAYMENT_TOKEN] = $token;
+
+            return $router->assemble($userParams, $context);
+        }
+
+        return $router->assemble($userParams, $context);
+    }
 }
