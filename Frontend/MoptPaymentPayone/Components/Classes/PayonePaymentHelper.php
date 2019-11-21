@@ -1352,11 +1352,27 @@ class Mopt_PayonePaymentHelper
             /** @noinspection PhpFullyQualifiedNameUsageInspection */
             $token = Shopware()->Container()->get(\Shopware\Components\Cart\PaymentTokenService::class)->generate();
             /** @noinspection PhpFullyQualifiedNameUsageInspection */
-            $userParams[\Shopware\Components\Cart\PaymentTokenService::TYPE_PAYMENT_TOKEN] = $token;
-
-            return str_replace("//", "/", $router->assemble($userParams, $context));
+            $this->array_splice_assoc($userParams, -1, 0, array(\Shopware\Components\Cart\PaymentTokenService::TYPE_PAYMENT_TOKEN => $token));
+            return $router->assemble(
+                $userParams
+                , $context);
         }
 
         return $router->assemble($userParams, $context);
+    }
+
+    function array_splice_assoc(&$input, $offset, $length, $replacement = array()) {
+        $replacement = (array) $replacement;
+        $key_indices = array_flip(array_keys($input));
+        if (isset($input[$offset]) && is_string($offset)) {
+            $offset = $key_indices[$offset];
+        }
+        if (isset($input[$length]) && is_string($length)) {
+            $length = $key_indices[$length] - $offset;
+        }
+
+        $input = array_slice($input, 0, $offset, TRUE)
+            + $replacement
+            + array_slice($input, $offset + $length, NULL, TRUE);
     }
 }
