@@ -1354,7 +1354,7 @@ class Mopt_PayonePaymentHelper
             /** @noinspection PhpFullyQualifiedNameUsageInspection */
             $userParams[\Shopware\Components\Cart\PaymentTokenService::TYPE_PAYMENT_TOKEN] = $token;
 
-            return $router->assemble($userParams, $context);
+            return str_replace("//", "/", $router->assemble($userParams, $context));
         }
 
         return $router->assemble($userParams, $context);
